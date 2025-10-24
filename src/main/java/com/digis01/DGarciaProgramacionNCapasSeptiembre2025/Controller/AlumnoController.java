@@ -5,10 +5,12 @@ import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.EstadoDAOImplemen
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.SemestreDAOImplementation;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Alumno;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,8 +57,16 @@ public class AlumnoController {
     }
     
     @PostMapping("add")
-    public String Form(@ModelAttribute("Alumno") Alumno alumno){
+    public String Form(@Valid @ModelAttribute("Alumno") Alumno alumno,
+                        BindingResult bindingResult,
+                        Model model){
         
+        if (bindingResult.hasErrors()) {
+            
+            model.addAttribute("Alumno", alumno);
+            model.addAttribute("semestres", semestreDAOImplementation.GetAll().objects);
+            return "AlumnoForm";
+        }
 //        Result result = alumnoDAOImplementation.Add(alumno);
                 // alumnoDAOImplementation
                         // java.util.date  -- > setDate()

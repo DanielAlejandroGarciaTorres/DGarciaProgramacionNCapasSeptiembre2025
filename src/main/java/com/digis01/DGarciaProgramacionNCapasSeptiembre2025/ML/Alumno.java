@@ -1,5 +1,8 @@
 package com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -7,6 +10,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Alumno {
 
     private int IdAlumno; //Propiedad
+    // null  vs ""
+    @NotNull(message = "Campo no puede ser nulo")
+    @NotBlank(message = "Campo debe contener datos")
+    @Size(min = 2, max = 17, message = "entre 2 y 17")
     private String Nombre;
     private String ApellidoPaterno;
     private String ApellidoMaterno;
