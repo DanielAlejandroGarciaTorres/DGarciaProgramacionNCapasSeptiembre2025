@@ -30,6 +30,16 @@ public class Colonia {
     public void setCodigoPotal(String CodigoPotal) {
         this.CodigoPotal = CodigoPotal;
     }
+
+    public Municipio getMunicipio() {
+        return Municipio;
+    }
+
+    public void setMunicipio(Municipio Municipio) {
+        this.Municipio = Municipio;
+    }
+    
+    
     
     
 }

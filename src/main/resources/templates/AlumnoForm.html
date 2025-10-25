@@ -112,14 +112,27 @@
 
                     <div class="col-md-3">
                         <label for="paisddl" class="form-label fw-bold">Pais</label>
-                        <select id="ddlpais" class="form-select" aria-label="Default select example" >
+                        <select id="ddlpais" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.Municipio.Estado.Pais.IdPais}">
                             <option value=0 selected>Selecciona un pais</option>
                             <option value=1>México</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="ddlestado" class="form-label fw-bold">Pais</label>
-                        <select id="ddlestado" class="form-select" aria-label="Default select example" >
+                        <label for="ddlestado" class="form-label fw-bold">Estado</label>
+                        <select id="ddlestado" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.Municipio.Estado.IdEstado}">
+                            <option value=0 selected>Selecciona un estado</option>
+                            <option th:each="estado : ${estados}" th:value="${estado.IdEstado}" th:text="${estado.Nombre}">Selecciona un estado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="ddlmunicipio" class="form-label fw-bold">Municipio</label>
+                        <select id="ddlmunicipio" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.Municipio.IdMunicipio}">
+                            <option value=0 selected>Selecciona un estado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="ddlcolonia" class="form-label fw-bold">Colonia</label>
+                        <select id="ddlcolonia" class="form-select" aria-label="Default select example" th:field="*{Direcciones[0].Colonia.IdColonia}">
                             <option value=0 selected>Selecciona un estado</option>
                         </select>
                     </div>

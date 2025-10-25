@@ -18,36 +18,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller  
+@Controller
 @RequestMapping("alumno")
 public class AlumnoController {
-    
+
     @Autowired
     private AlumnoDAOImplementation alumnoDAOImplementation;
-    
+
     @Autowired
     private SemestreDAOImplementation semestreDAOImplementation;
-    
+
     @Autowired
     private EstadoDAOImplementation estadoDAOImplementation;
-    
+
     @GetMapping
-    public String Index(Model model){
+    public String Index(Model model) {
         Result result = alumnoDAOImplementation.GetAll();
-        
+
         model.addAttribute("alumnos", result.objects);
-        
+
         return "AlumnoIndex";
     }
-    
+
     @GetMapping("detail")
-    public String Detail(){
+    public String Detail() {
         return "AlumnoDetail";
     }
-    
+
     @GetMapping("add")
-    public String Form(Model model){
-        
+    public String Form(Model model) {
+
         Alumno alumno = new Alumno();
 //        alumno.Direcciones = new ArrayList<>();
         model.addAttribute("Alumno", alumno);
@@ -55,28 +55,37 @@ public class AlumnoController {
         model.addAttribute("semestres", semestreDAOImplementation.GetAll().objects);
         return "AlumnoForm";
     }
-    
+
     @PostMapping("add")
     public String Form(@Valid @ModelAttribute("Alumno") Alumno alumno,
-                        BindingResult bindingResult,
-                        Model model){
-        
+            BindingResult bindingResult,
+            Model model) {
+
         if (bindingResult.hasErrors()) {
-            
+
             model.addAttribute("Alumno", alumno);
             model.addAttribute("semestres", semestreDAOImplementation.GetAll().objects);
-            return "AlumnoForm";
+            // model.addAttribute("paises", paisDAOImplementation.GetAll())
+            if (alumno.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais() > 0) {
+                model.addAttribute("estados",estadoDAOImplementation.GetByIdPais(alumno.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais()).objects);
+                if(alumno.Direcciones.get(0).Colonia.Municipio.Estado.getIdEstado() > 0) {
+                    // recupero la información 
+//                    if()
+                }
+            }
+            
+                return "AlumnoForm";
         }
 //        Result result = alumnoDAOImplementation.Add(alumno);
-                // alumnoDAOImplementation
-                        // java.util.date  -- > setDate()
-                        
+        // alumnoDAOImplementation
+        // java.util.date  -- > setDate()
+
         return "redirect:/alumno";
     }
-    
+
     @GetMapping("estado/{idPais}")
     @ResponseBody // retornara un dato estructurado 
-    public Result GetEstadosByIdPais(@PathVariable("idPais") int idPais){
+    public Result GetEstadosByIdPais(@PathVariable("idPais") int idPais) {
         return estadoDAOImplementation.GetByIdPais(idPais);
     }
 }

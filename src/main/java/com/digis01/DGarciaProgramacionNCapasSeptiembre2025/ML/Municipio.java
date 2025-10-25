@@ -21,6 +21,14 @@ public class Municipio {
     public void setNombre(String Nombre) {
         this.Nombre = Nombre;
     }
+
+    public Estado getEstado() {
+        return Estado;
+    }
+
+    public void setEstado(Estado Estado) {
+        this.Estado = Estado;
+    }
     
     
     
