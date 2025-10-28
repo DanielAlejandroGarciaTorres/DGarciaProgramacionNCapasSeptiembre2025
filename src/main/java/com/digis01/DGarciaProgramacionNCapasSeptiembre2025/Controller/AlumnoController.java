@@ -40,8 +40,10 @@ public class AlumnoController {
         return "AlumnoIndex";
     }
 
-    @GetMapping("detail")
-    public String Detail() {
+    @GetMapping("detail/{idAlumno}")
+    public String Detail(@PathVariable("idAlumno") int idAlumno, Model model) {
+        model.addAttribute("alumno", alumnoDAOImplementation.GetById(idAlumno).object);
+        
         return "AlumnoDetail";
     }
 
@@ -83,6 +85,12 @@ public class AlumnoController {
         return "redirect:/alumno";
     }
 
+    @PostMapping("/detail")
+    public String UpdateAlumno(@ModelAttribute("alumno") Alumno alumno){
+        Result result = alumnoDAOImplementation.Update(alumno);
+        return "redirect:/alumno/detail/" + alumno.getIdAlumno();
+    }
+    
     @GetMapping("estado/{idPais}")
     @ResponseBody // retornara un dato estructurado 
     public Result GetEstadosByIdPais(@PathVariable("idPais") int idPais) {
