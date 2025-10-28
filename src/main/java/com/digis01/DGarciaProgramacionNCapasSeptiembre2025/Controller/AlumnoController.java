@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("alumno")
@@ -43,7 +44,7 @@ public class AlumnoController {
     @GetMapping("detail/{idAlumno}")
     public String Detail(@PathVariable("idAlumno") int idAlumno, Model model) {
         model.addAttribute("alumno", alumnoDAOImplementation.GetById(idAlumno).object);
-        
+
         return "AlumnoDetail";
     }
 
@@ -61,7 +62,8 @@ public class AlumnoController {
     @PostMapping("add")
     public String Form(@Valid @ModelAttribute("Alumno") Alumno alumno,
             BindingResult bindingResult,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
 
@@ -69,28 +71,35 @@ public class AlumnoController {
             model.addAttribute("semestres", semestreDAOImplementation.GetAll().objects);
             // model.addAttribute("paises", paisDAOImplementation.GetAll())
             if (alumno.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais() > 0) {
-                model.addAttribute("estados",estadoDAOImplementation.GetByIdPais(alumno.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais()).objects);
-                if(alumno.Direcciones.get(0).Colonia.Municipio.Estado.getIdEstado() > 0) {
+                model.addAttribute("estados", estadoDAOImplementation.GetByIdPais(alumno.Direcciones.get(0).Colonia.Municipio.Estado.Pais.getIdPais()).objects);
+                if (alumno.Direcciones.get(0).Colonia.Municipio.Estado.getIdEstado() > 0) {
                     // recupero la información 
 //                    if()
                 }
             }
             
-                return "AlumnoForm";
+            return "AlumnoForm";
+
         }
 //        Result result = alumnoDAOImplementation.Add(alumno);
         // alumnoDAOImplementation
         // java.util.date  -- > setDate()
-
+//            if (result.correct) {
+//                
+//            } else {
+//                
+//            }
+        redirectAttributes.addFlashAttribute("successMessage", "El usuario " + alumno.getUserName() + "se creo con exito.");
+        
         return "redirect:/alumno";
     }
 
     @PostMapping("/detail")
-    public String UpdateAlumno(@ModelAttribute("alumno") Alumno alumno){
+    public String UpdateAlumno(@ModelAttribute("alumno") Alumno alumno) {
         Result result = alumnoDAOImplementation.Update(alumno);
         return "redirect:/alumno/detail/" + alumno.getIdAlumno();
     }
-    
+
     @GetMapping("estado/{idPais}")
     @ResponseBody // retornara un dato estructurado 
     public Result GetEstadosByIdPais(@PathVariable("idPais") int idPais) {
