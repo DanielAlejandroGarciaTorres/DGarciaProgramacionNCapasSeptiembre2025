@@ -23,6 +23,7 @@ public class Alumno {
     private Date FechaNacimiento;
     public Semestre Semestre; // Propiedad de navegación
     public List<Direccion> Direcciones;
+    private String Imagen;
     
     public Alumno(){
         
@@ -104,6 +105,15 @@ public class Alumno {
     public void setDirecciones(List<Direccion> Direcciones) {
         this.Direcciones = Direcciones;
     }
+
+    public String getImagen() {
+        return Imagen;
+    }
+
+    public void setImagen(String Imagen) {
+        this.Imagen = Imagen;
+    }
+    
     
     
 }
