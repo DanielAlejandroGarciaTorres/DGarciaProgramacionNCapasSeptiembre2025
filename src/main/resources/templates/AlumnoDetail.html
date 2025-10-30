@@ -40,7 +40,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                     <div class="mb-3">
                                         <input class="form-control" type="text" placeholder="Apellido Materno" th:field="*{ApellidoMaterno}">
                                     </div>
-                                    <button type="submit" class="btn btn-warning"> Editar </button>
+                                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal"> Editar </button>
                                 </form>
                             </div>
                         </div>
@@ -62,6 +62,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                             </div>
                             <br/><br/>
 
+                            <br/><br/>
                             <table class="table table-responsive table-bordered  table-striped">
                                 <thead class="table-dark">
                                     <tr>
@@ -70,32 +71,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="direccion : {alumno.Direcciones}">
                                         <td ></td>
                                         <td>
                                             <a class="btn btn-warning btn-sm" >Editar</a>
-                                            <a class="btn btn-danger btn-sm" >Eliminar</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td ></td>
-                                        <td>
-                                            <a class="btn btn-warning btn-sm" >Editar</a>
-                                            <a class="btn btn-danger btn-sm" >Eliminar</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td ></td>
-                                        <td>
-                                            <a class="btn btn-warning btn-sm" >Editar</a>
-                                            <a class="btn btn-danger btn-sm" >Eliminar</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td ></td>
-                                        <td>
-                                            <a class="btn btn-warning btn-sm" >Editar</a>
-                                            <a class="btn btn-danger btn-sm" >Eliminar</a>
+                                            <a class="btn btn-danger btn-sm" th:onclick="|FormDireccionEditable(${direccion.IdDireccion})|">Eliminar</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -104,6 +84,100 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this temp
                     </div>
                 </div>
             </div>
+
+
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Launch demo modal
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" th:object="${direccion}" th:action="@{/alumno/actiondireccion/{idAlumno}(idAlumno = ${alumno.IdAlumno})}">
+                                <div class="row mb-3">
+                                    <input type="hidden" th:field="*{IdDireccion}">
+                                    <div class="col-md-8">
+                                        <label class="form-label fw-bold">Calle</label>
+                                        <input id="direccionCalle" type="text" class="form-control" placeholder="Calle" th:field="*{Calle}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold"># Interior</label>
+                                        <input type="text" class="form-control" placeholder="# int." th:field="*{NumeroInterior}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label fw-bold"># Exterior</label>
+                                        <input type="text" class="form-control" placeholder="# ext." th:field="*{NumeroExterior}">
+                                    </div>
+                                </div>
+
+                                <div class="row"> 
+
+                                    <div class="col-md-3">
+                                        <label for="paisddl" class="form-label fw-bold">Pais</label>
+                                        <select id="ddlpais" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.Estado.Pais.IdPais}">
+                                            <option value=0 selected>Selecciona un pais</option>
+                                            <option value=1>México</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="ddlestado" class="form-label fw-bold">Estado</label>
+                                        <select id="ddlestado" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.Estado.IdEstado}">
+                                            <option value=0 selected>Selecciona un estado</option>
+                                            <option th:each="estado : ${estados}" th:value="${estado.IdEstado}" th:text="${estado.Nombre}">Selecciona un estado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="ddlmunicipio" class="form-label fw-bold">Municipio</label>
+                                        <select id="ddlmunicipio" class="form-select" aria-label="Default select example" th:field="*{Colonia.Municipio.IdMunicipio}">
+                                            <option value=0 selected>Selecciona un estado</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="ddlcolonia" class="form-label fw-bold">Colonia</label>
+                                        <select id="ddlcolonia" class="form-select" aria-label="Default select example" th:field="*{Colonia.IdColonia}">
+                                            <option value=0 selected>Selecciona un estado</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="CodigoPostal" class="form-label fw-bold">Codigo Postal</label>
+                                        <input id="CodigoPostal" type="text" class="form-control" placeholder="Codigo Postal">
+
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-success mt-4 w-100 fw-bold">Agregar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    <scrip>
+        
+        function FormDireccionEditable(idDireccion){
+            var direccion;
+            $.ajax({
+                url:"/alumno/direccion/"+idDireccion,
+                type:"GET",
+                success: function(data){
+                    direccion = data;
+                },
+                error: function({})
+            });
+            
+            // consumo ajax url:/alumno/getEstadoByPais/ + direccion.Colonia.munici
+            // consumo ajax url:/alumno/getMunicipiosByEstado/ + direccion.Colonia.municipio.Estado.IdEstado
+        }
+        
+        
+        
+    </script>
     </body>
 </html>

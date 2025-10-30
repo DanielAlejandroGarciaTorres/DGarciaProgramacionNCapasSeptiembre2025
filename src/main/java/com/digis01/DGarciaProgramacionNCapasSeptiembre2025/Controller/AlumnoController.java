@@ -4,6 +4,7 @@ import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.AlumnoDAOImplemen
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.EstadoDAOImplementation;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.SemestreDAOImplementation;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Alumno;
+import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Direccion;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -51,7 +52,8 @@ public class AlumnoController {
     @GetMapping("detail/{idAlumno}")
     public String Detail(@PathVariable("idAlumno") int idAlumno, Model model) {
         model.addAttribute("alumno", alumnoDAOImplementation.GetById(idAlumno).object);
-
+        model.addAttribute("direccion", new Direccion());
+//        model.addAttribute("paises", direccionDAOImplementation.GetAll().objects);
         return "AlumnoDetail";
     }
 
@@ -89,6 +91,7 @@ public class AlumnoController {
             return "AlumnoForm";
 
         }
+
 //        Result result = alumnoDAOImplementation.Add(alumno);
         // alumnoDAOImplementation
         // java.util.date  -- > setDate()
@@ -97,7 +100,6 @@ public class AlumnoController {
 //            } else {
 //                
 //            }
-
         if (imagenFile != null) {
             try {
                 //vuelvo a asegurarme que es jpg o png
@@ -117,6 +119,19 @@ public class AlumnoController {
         redirectAttributes.addFlashAttribute("successMessage", "El usuario " + alumno.getUserName() + "se creo con exito.");
 
         return "redirect:/alumno";
+    }
+
+    @PostMapping("actiondireccion/{idAlumno}")
+    public String ActionDireccion(@PathVariable("idAlumno") int idAlumno, @ModelAttribute("direccion") Direccion direccion, Model model) {
+
+        if (direccion.getIdDireccion() == 0) { // agregar direccion a usuario
+            alumnoDAOImplementation.AddDireccion(direccion, idAlumno);
+        } else { // editar la direccion a usuario
+            alumnoDAOImplementation.UpdateDireccion(direccion, idAlumno);
+        }
+        
+        return "redirect:/usuario/detail/"+idAlumno;
+
     }
 
     @PostMapping("/detail")

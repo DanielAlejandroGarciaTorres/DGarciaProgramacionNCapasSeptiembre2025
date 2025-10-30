@@ -151,4 +151,16 @@ public class AlumnoDAOImplementation implements IAlumnoDAO {
         });
     }
 
+    @Override
+    public Result AddDireccion(Direccion direccion, int idUsuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Result UpdateDireccion(Direccion direccion, int idUsuario) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    
+
 }
