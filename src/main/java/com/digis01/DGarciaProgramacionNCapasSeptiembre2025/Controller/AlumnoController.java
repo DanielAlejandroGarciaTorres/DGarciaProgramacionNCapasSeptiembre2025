@@ -7,10 +7,14 @@ import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Alumno;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Direccion;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
 import jakarta.validation.Valid;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,6 +142,47 @@ public class AlumnoController {
     public String UpdateAlumno(@ModelAttribute("alumno") Alumno alumno) {
         Result result = alumnoDAOImplementation.Update(alumno);
         return "redirect:/alumno/detail/" + alumno.getIdAlumno();
+    }
+    
+    
+    @GetMapping("/cargamasiva")
+    public String CargaMasiva(){
+        return "CargaMAsiva";
+    }
+    
+    @PostMapping("/cargamasiva")
+    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo){
+        String extension = archivo.getOriginalFilename().split("\\.")[1];
+        if(extension.equals("txt")){
+            LecturaArchivoTXT(archivo);
+            // ValidarDatosArchivo(lista); --> retorna una lista de errores
+        } else if (extension == "xlsx"){
+            
+        } else {
+            // error
+        }
+        
+        return "CargaMasiva";
+    }
+    
+    public List<Alumno> LecturaArchivoTXT(MultipartFile archivo){
+    
+        try(InputStream inputStream = archivo.getInputStream();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));){
+        String linea = "";
+        
+        while((linea = bufferedReader.readLine()) != null){
+            
+            String[] campos = linea.split("\\|");
+            System.out.println(campos[0]);
+        }
+            
+            
+        } catch (Exception ex) {
+            return null;
+        }
+        
+        return null;
     }
 
     @GetMapping("estado/{idPais}")

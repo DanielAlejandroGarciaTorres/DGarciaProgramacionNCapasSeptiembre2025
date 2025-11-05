@@ -2,22 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
-<!--    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    </head>-->
+
     <body class="container" layout:fragment="body">
 
         </br>
         </br>
 
-        <a class="btn btn-success" th:href="@{/alumno/add}"> Agregar</a>
-        <a class="btn btn-success" th:href="@{/alumno/cargamasiva}"> Carga masiva</a>
+        <a class="btn btn-success" th:href="@{/alumno/add}"> Agregar <i class="bi bi-person-fill-add"></i></a>
+        <a class="btn btn-warning" th:href="@{/alumno/cargamasiva}"> Carga masiva <i class="bi bi-file-earmark-arrow-up-fill"></i></a>
         <!--<a th:href="@{/alumno/add}"></a>-->
 
         </br>
