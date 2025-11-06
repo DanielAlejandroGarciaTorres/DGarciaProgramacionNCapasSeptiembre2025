@@ -15,6 +15,8 @@ public class Alumno {
     @NotBlank(message = "Campo debe contener datos")
     @Size(min = 2, max = 17, message = "entre 2 y 17")
     private String Nombre;
+    @NotBlank(message = "Campo debe contener datos")
+    @Size(min = 2, max = 17, message = "entre 2 y 17")
     private String ApellidoPaterno;
     private String ApellidoMaterno;
     private String UserName;

@@ -5,7 +5,9 @@ import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.EstadoDAOImplemen
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.SemestreDAOImplementation;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Alumno;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Direccion;
+import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.ErrorCarga;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
+import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.Service.ValidationService;
 import jakarta.validation.Valid;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +38,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("alumno")
 public class AlumnoController {
+
+    @Autowired
+    private ValidationService validationService;
 
     @Autowired
     private AlumnoDAOImplementation alumnoDAOImplementation;
@@ -133,8 +140,8 @@ public class AlumnoController {
         } else { // editar la direccion a usuario
             alumnoDAOImplementation.UpdateDireccion(direccion, idAlumno);
         }
-        
-        return "redirect:/usuario/detail/"+idAlumno;
+
+        return "redirect:/usuario/detail/" + idAlumno;
 
     }
 
@@ -143,48 +150,91 @@ public class AlumnoController {
         Result result = alumnoDAOImplementation.Update(alumno);
         return "redirect:/alumno/detail/" + alumno.getIdAlumno();
     }
-    
-    
+
     @GetMapping("/cargamasiva")
-    public String CargaMasiva(){
+    public String CargaMasiva() {
         return "CargaMAsiva";
     }
-    
+
     @PostMapping("/cargamasiva")
-    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo){
+    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo) {
         String extension = archivo.getOriginalFilename().split("\\.")[1];
-        if(extension.equals("txt")){
-            LecturaArchivoTXT(archivo);
-            // ValidarDatosArchivo(lista); --> retorna una lista de errores
-        } else if (extension == "xlsx"){
+        if (extension.equals("txt")) {
+            List<Alumno> alumnos = LecturaArchivoTXT(archivo);
+            List<ErrorCarga> errores = ValidarDatosArchivo(alumnos); //--> retorna una lista de errores
             
+            if (errores.isEmpty()) { // todo cul
+                // pintar un boton que diga procesar
+            } else { // no cul
+                // pintar la lista de errores
+            }
+
+            // validator
+        } else if (extension == "xlsx") {
+
         } else {
             // error
         }
-        
+
         return "CargaMasiva";
     }
-    
-    public List<Alumno> LecturaArchivoTXT(MultipartFile archivo){
-    
-        try(InputStream inputStream = archivo.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));){
-        String linea = "";
+
+    public List<ErrorCarga> ValidarDatosArchivo(List<Alumno> alumnos){
         
-        while((linea = bufferedReader.readLine()) != null){
-            
-            String[] campos = linea.split("\\|");
-            System.out.println(campos[0]);
+        List<ErrorCarga> erroresCarga = new ArrayList<>();
+        int lineaError = 0;
+        
+        for (Alumno alumno : alumnos) {
+            lineaError++;
+            BindingResult bindingResult = validationService.validateObject(alumno);
+            List<ObjectError> errors = bindingResult.getAllErrors();
+            for (ObjectError error : errors) {
+                FieldError fieldError = (FieldError) error;
+                ErrorCarga errorCarga = new ErrorCarga();
+                errorCarga.campo = fieldError.getField();
+                errorCarga.descripcion = fieldError.getDefaultMessage();
+                errorCarga.linea = lineaError;  
+                erroresCarga.add(errorCarga);
+            }
         }
-            
-            
+        
+        return erroresCarga;
+    }
+    
+    public List<Alumno> LecturaArchivoTXT(MultipartFile archivo) {
+        //SCOPE 
+        // --
+        List<Alumno> alumnos = new ArrayList<>();
+
+        try (InputStream inputStream = archivo.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));) {
+            String linea = "";
+
+            while ((linea = bufferedReader.readLine()) != null) {
+
+                String[] campos = linea.split("\\|");
+                Alumno alumno = new Alumno();
+                alumno.setNombre(campos[0]);
+                alumno.setApellidoPaterno(campos[1]);
+                alumno.setApellidoMaterno(campos[2]);
+                
+                alumnos.add(alumno);
+            }
+
         } catch (Exception ex) {
             return null;
         }
-        
-        return null;
+
+        return alumnos;
     }
 
+    /*
+    
+    Valdar
+    
+    if alumno.getNombre == "" || null 
+    
+    
+     */
     @GetMapping("estado/{idPais}")
     @ResponseBody // retornara un dato estructurado 
     public Result GetEstadosByIdPais(@PathVariable("idPais") int idPais) {
