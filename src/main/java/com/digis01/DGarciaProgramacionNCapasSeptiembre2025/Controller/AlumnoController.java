@@ -10,15 +10,21 @@ import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.Service.ValidationService;
 import jakarta.validation.Valid;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -157,12 +163,22 @@ public class AlumnoController {
     }
 
     @PostMapping("/cargamasiva")
-    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo) {
+    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo) throws IOException {
         String extension = archivo.getOriginalFilename().split("\\.")[1];
+        
+        
+        String path = System.getProperty("user.dir");
+        String pathArchivo = "src/main/resources/archivosCarga";
+        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmSS"));
+        String pathDefinitvo = path + "/" + pathArchivo + "/" + fecha + archivo.getOriginalFilename();
+          
+        archivo.transferTo(new File(pathDefinitvo));
+        
+        
         if (extension.equals("txt")) {
             List<Alumno> alumnos = LecturaArchivoTXT(archivo);
             List<ErrorCarga> errores = ValidarDatosArchivo(alumnos); //--> retorna una lista de errores
-            
+
             if (errores.isEmpty()) { // todo cul
                 // pintar un boton que diga procesar
             } else { // no cul
@@ -170,8 +186,8 @@ public class AlumnoController {
             }
 
             // validator
-        } else if (extension == "xlsx") {
-
+        } else if (extension.equals("xlsx")) {
+            List<Alumno> alumnos = LecturaArchivoXLSX(archivo);
         } else {
             // error
         }
@@ -179,11 +195,11 @@ public class AlumnoController {
         return "CargaMasiva";
     }
 
-    public List<ErrorCarga> ValidarDatosArchivo(List<Alumno> alumnos){
-        
+    public List<ErrorCarga> ValidarDatosArchivo(List<Alumno> alumnos) {
+
         List<ErrorCarga> erroresCarga = new ArrayList<>();
         int lineaError = 0;
-        
+
         for (Alumno alumno : alumnos) {
             lineaError++;
             BindingResult bindingResult = validationService.validateObject(alumno);
@@ -193,14 +209,14 @@ public class AlumnoController {
                 ErrorCarga errorCarga = new ErrorCarga();
                 errorCarga.campo = fieldError.getField();
                 errorCarga.descripcion = fieldError.getDefaultMessage();
-                errorCarga.linea = lineaError;  
+                errorCarga.linea = lineaError;
                 erroresCarga.add(errorCarga);
             }
         }
-        
+
         return erroresCarga;
     }
-    
+
     public List<Alumno> LecturaArchivoTXT(MultipartFile archivo) {
         //SCOPE 
         // --
@@ -216,7 +232,7 @@ public class AlumnoController {
                 alumno.setNombre(campos[0]);
                 alumno.setApellidoPaterno(campos[1]);
                 alumno.setApellidoMaterno(campos[2]);
-                
+
                 alumnos.add(alumno);
             }
 
@@ -227,6 +243,24 @@ public class AlumnoController {
         return alumnos;
     }
 
+    
+    public List<Alumno> LecturaArchivoXLSX(MultipartFile archivo){
+        List<Alumno> alumnos = new ArrayList<>();
+        
+        try(XSSFWorkbook workbook = new XSSFWorkbook(archivo.getInputStream())){
+            XSSFSheet workSheet = workbook.getSheetAt(0);
+            for (Row row : workSheet) {
+                Alumno alumno = new Alumno();
+                alumno.setNombre(row.getCell(0).toString());
+                alumno.setApellidoPaterno(row.getCell(1).toString());
+                alumno.setApellidoPaterno(row.getCell(2).toString());
+                alumnos.add(alumno);
+            }
+        }catch(Exception ex){
+            return null;
+        }
+        return alumnos;
+    }
     /*
     
     Valdar
