@@ -7,10 +7,12 @@ import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Semestre;
 import java.sql.ResultSet;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.CallableStatementCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository // Esto es una clase que maneja base de datos
 public class AlumnoDAOImplementation implements IAlumnoDAO {
@@ -159,6 +161,43 @@ public class AlumnoDAOImplementation implements IAlumnoDAO {
     @Override
     public Result UpdateDireccion(Direccion direccion, int idUsuario) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    //update -- SQl Directo
+    
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Result AddAll(List<Alumno> alumnos) {
+        
+        Result result = new Result();
+        
+        try{
+            //parametricedtypereference
+            jdbcTemplate.batchUpdate("{CALL AlumnoAdd(?,?,?,?,?,?,?)}", 
+                    alumnos, 
+                    alumnos.size(), 
+                    (callableStatement, alumno) -> {
+                        
+                        callableStatement.setString(1, alumno.getNombre());
+                        callableStatement.setString(2, alumno.getApellidoPaterno());
+                        callableStatement.setString(3, alumno.getApellidoMaterno());
+                        callableStatement.setString(4, alumno.getUserName());
+                        callableStatement.setString(5, alumno.getTelefono());
+                        callableStatement.setDate(6, new java.sql.Date(alumno.getFechaNacimiento().getTime()));
+                        callableStatement.setInt(7, alumno.Semestre.getIdSemestre());
+                    
+                    });
+            
+            result.correct = true;
+            
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
+        
+        return result;
+        
     }
 
     

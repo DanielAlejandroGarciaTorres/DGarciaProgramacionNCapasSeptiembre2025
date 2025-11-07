@@ -3,6 +3,7 @@ package com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Alumno;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Direccion;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
+import java.util.List;
 
 public interface IAlumnoDAO {
 
@@ -17,4 +18,6 @@ public interface IAlumnoDAO {
     Result AddDireccion(Direccion direccion, int idUsuario);
     
     Result UpdateDireccion(Direccion direccion, int idUsuario);
+    
+    Result AddAll(List<Alumno> alumnos);
 }
