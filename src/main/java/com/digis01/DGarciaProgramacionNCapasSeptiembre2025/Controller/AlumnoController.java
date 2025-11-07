@@ -8,9 +8,11 @@ import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Direccion;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.ErrorCarga;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.Service.ValidationService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -159,37 +161,54 @@ public class AlumnoController {
 
     @GetMapping("/cargamasiva")
     public String CargaMasiva() {
-        return "CargaMAsiva";
+        return "CargaMasiva";
+    }
+    
+    @GetMapping("/cargamasiva/procesar")
+    public String CargaMasiva( HttpSession session) {
+        String Path = session.getAttribute("archivoCargaMasiva").toString();
+        session.removeAttribute("archivoCargaMasiva");
+        
+        //inserción con carga masiva
+        
+        // 
+        
+        return "CargaMasiva";
     }
 
     @PostMapping("/cargamasiva")
-    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo) throws IOException {
+    public String CargaMasiva(@RequestParam("archivo") MultipartFile archivo, Model model, HttpSession session) throws IOException {
         String extension = archivo.getOriginalFilename().split("\\.")[1];
-        
-        
+
         String path = System.getProperty("user.dir");
         String pathArchivo = "src/main/resources/archivosCarga";
         String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmSS"));
         String pathDefinitvo = path + "/" + pathArchivo + "/" + fecha + archivo.getOriginalFilename();
-          
+
         archivo.transferTo(new File(pathDefinitvo));
-        
-        
+
+        List<Alumno> alumnos;
         if (extension.equals("txt")) {
-            List<Alumno> alumnos = LecturaArchivoTXT(archivo);
-            List<ErrorCarga> errores = ValidarDatosArchivo(alumnos); //--> retorna una lista de errores
-
-            if (errores.isEmpty()) { // todo cul
-                // pintar un boton que diga procesar
-            } else { // no cul
-                // pintar la lista de errores
-            }
-
+            alumnos = LecturaArchivoTXT(new File(pathDefinitvo));
             // validator
         } else if (extension.equals("xlsx")) {
-            List<Alumno> alumnos = LecturaArchivoXLSX(archivo);
+            alumnos = LecturaArchivoXLSX(new File(pathDefinitvo));
         } else {
             // error
+            model.addAttribute("errroMessage","Manda un archivo que sea valido :@");
+            return "CargaMasiva";
+        }
+
+        List<ErrorCarga> errores = ValidarDatosArchivo(alumnos); //--> retorna una lista de errores
+
+        if (errores.isEmpty()) { // todo cul
+            // pintar un boton que diga procesar
+            model.addAttribute("errores", false);
+            session.setAttribute("archivoCargaMasiva", pathDefinitvo);
+        } else { // no cul
+            // pintar la lista de errores
+            model.addAttribute("errores", true);
+            model.addAttribute("errores", errores);
         }
 
         return "CargaMasiva";
@@ -217,12 +236,13 @@ public class AlumnoController {
         return erroresCarga;
     }
 
-    public List<Alumno> LecturaArchivoTXT(MultipartFile archivo) {
+    public List<Alumno> LecturaArchivoTXT(File archivo) {
         //SCOPE 
         // --
         List<Alumno> alumnos = new ArrayList<>();
-
-        try (InputStream inputStream = archivo.getInputStream(); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));) {
+        
+        
+        try (InputStream fileInputStream = new FileInputStream(archivo); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));) {
             String linea = "";
 
             while ((linea = bufferedReader.readLine()) != null) {
@@ -243,11 +263,11 @@ public class AlumnoController {
         return alumnos;
     }
 
-    
-    public List<Alumno> LecturaArchivoXLSX(MultipartFile archivo){
+    public List<Alumno> LecturaArchivoXLSX(File archivo) {
         List<Alumno> alumnos = new ArrayList<>();
         
-        try(XSSFWorkbook workbook = new XSSFWorkbook(archivo.getInputStream())){
+        try (InputStream fileInputStream = new FileInputStream(archivo);
+                XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream)) {
             XSSFSheet workSheet = workbook.getSheetAt(0);
             for (Row row : workSheet) {
                 Alumno alumno = new Alumno();
@@ -256,11 +276,12 @@ public class AlumnoController {
                 alumno.setApellidoPaterno(row.getCell(2).toString());
                 alumnos.add(alumno);
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             return null;
         }
         return alumnos;
     }
+
     /*
     
     Valdar

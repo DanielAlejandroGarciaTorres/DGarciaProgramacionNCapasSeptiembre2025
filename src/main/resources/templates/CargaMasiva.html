@@ -26,6 +26,14 @@
             </div>
 
             
+            
+            
+            <div th:if="${errores}">
+                <p>Lista errores</p>
+            </div>
+            <div th:if="${errores == false}">
+                <a class="btn btn-success" th:href="@{/alumno/cargamasiva/procesar}">Procesar</a>
+            </div>
 
 
         </div>
