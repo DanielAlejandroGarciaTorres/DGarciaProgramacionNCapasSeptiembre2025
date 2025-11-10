@@ -1,6 +1,7 @@
 package com.digis01.DGarciaProgramacionNCapasSeptiembre2025.Controller;
 
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.AlumnoDAOImplementation;
+import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.AlumnoJPADAOImplementation;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.EstadoDAOImplementation;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO.SemestreDAOImplementation;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Alumno;
@@ -52,6 +53,9 @@ public class AlumnoController {
 
     @Autowired
     private AlumnoDAOImplementation alumnoDAOImplementation;
+    
+    @Autowired
+    private AlumnoJPADAOImplementation alumnoJPADAOImplementation;
 
     @Autowired
     private SemestreDAOImplementation semestreDAOImplementation;
@@ -62,6 +66,8 @@ public class AlumnoController {
     @GetMapping
     public String Index(Model model) {
         Result result = alumnoDAOImplementation.GetAll();
+        Result resultJPA = alumnoJPADAOImplementation.GetAll();
+        
 
         model.addAttribute("alumnos", result.objects);
 
