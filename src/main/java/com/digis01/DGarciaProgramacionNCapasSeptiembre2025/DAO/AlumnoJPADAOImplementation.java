@@ -22,6 +22,8 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA{
             TypedQuery<AlumnoJPA> queryAlumno = entityManager.createQuery("FROM AlumnoJPA", AlumnoJPA.class);
             List<AlumnoJPA> alumnos = queryAlumno.getResultList();
             
+            
+            
             //rowmapper
             
             result.correct = true;
@@ -34,5 +36,9 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA{
         }
         return result;
     }
-
+    
+    
+    // AlumnoML
+    // alumnoML - AlumnoJPA
+    //entityManager.persist(alumno);
 }
