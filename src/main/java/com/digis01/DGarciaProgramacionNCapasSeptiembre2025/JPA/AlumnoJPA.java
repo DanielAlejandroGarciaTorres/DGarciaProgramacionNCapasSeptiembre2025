@@ -37,4 +37,38 @@ public class AlumnoJPA {
     
     @OneToMany(mappedBy = "AlumnoJPA", cascade = CascadeType.ALL, orphanRemoval = true)
     public List<DireccionJPA> DireccionesJPA = new ArrayList<>();
+
+    public int getIdAlumno() {
+        return IdAlumno;
+    }
+
+    public void setIdAlumno(int IdAlumno) {
+        this.IdAlumno = IdAlumno;
+    }
+
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String Nombre) {
+        this.Nombre = Nombre;
+    }
+
+    public String getApellidoPaterno() {
+        return ApellidoPaterno;
+    }
+
+    public void setApellidoPaterno(String ApellidoPaterno) {
+        this.ApellidoPaterno = ApellidoPaterno;
+    }
+
+    public String getApellidoMaterno() {
+        return ApellidoMaterno;
+    }
+
+    public void setApellidoMaterno(String ApellidoMaterno) {
+        this.ApellidoMaterno = ApellidoMaterno;
+    }
+    
+    
 }

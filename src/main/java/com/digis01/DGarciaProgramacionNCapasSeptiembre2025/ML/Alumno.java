@@ -1,5 +1,6 @@
 package com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML;
 
+import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.JPA.AlumnoJPA;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,6 +31,13 @@ public class Alumno {
     public Alumno(){
         
     }
+    
+    //JPA - ML
+    public Alumno(AlumnoJPA alumnoJPA){
+        this.IdAlumno = alumnoJPA.getIdAlumno();
+        this.Nombre = alumnoJPA.getNombre();
+    }
+    
     
     public Alumno(String Nombre, String ApellidoPaterno){
         this.Nombre = Nombre;

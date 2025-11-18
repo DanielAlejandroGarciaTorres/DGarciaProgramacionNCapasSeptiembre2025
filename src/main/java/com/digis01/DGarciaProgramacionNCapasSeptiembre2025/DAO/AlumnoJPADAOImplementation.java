@@ -3,6 +3,7 @@ package com.digis01.DGarciaProgramacionNCapasSeptiembre2025.DAO;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.JPA.AlumnoJPA;
 import com.digis01.DGarciaProgramacionNCapasSeptiembre2025.ML.Result;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class AlumnoJPADAOImplementation implements IAlumnoJPA{
             
             TypedQuery<AlumnoJPA> queryAlumno = entityManager.createQuery("FROM AlumnoJPA", AlumnoJPA.class);
             List<AlumnoJPA> alumnos = queryAlumno.getResultList();
+            
+            
             
             
             
