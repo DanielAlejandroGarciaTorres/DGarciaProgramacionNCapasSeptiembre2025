@@ -31,6 +31,12 @@ public class AlumnoJPA {
     @Column(name = "apellidomaterno")
     private String ApellidoMaterno;
     
+    @Column(name = "username")
+    private String userName;
+    
+    @Column(name = "password")
+    private String Password;
+    
     @ManyToOne
     @JoinColumn(name = "idsemestre")
     public SemestreJPA Semestre;
@@ -68,6 +74,22 @@ public class AlumnoJPA {
 
     public void setApellidoMaterno(String ApellidoMaterno) {
         this.ApellidoMaterno = ApellidoMaterno;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String Password) {
+        this.Password = Password;
     }
     
     
